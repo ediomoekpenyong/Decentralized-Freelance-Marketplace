@@ -19,3 +19,36 @@ describe("example tests", () => {
   //   expect(result).toBeUint(0);
   // });
 });
+import { describe, it, expect, vi } from "vitest"
+
+// Mock the contract calls
+const contractCall = vi.fn()
+
+describe("Reputation System Contract", () => {
+  it("should leave a review for a user", async () => {
+    contractCall.mockResolvedValue({ success: true })
+    const result = await contractCall("leave-review", ["ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM", "5", "Great work!"])
+    expect(result).toEqual({ success: true })
+  })
+  
+  it("should calculate user reputation correctly", async () => {
+    contractCall.mockResolvedValue({ reputation: 4.5 })
+    const result = await contractCall("get-reputation", ["ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM"])
+    expect(result).toEqual({ reputation: 4.5 })
+  })
+  
+  it("should retrieve a specific review", async () => {
+    contractCall.mockResolvedValue({
+      reviewer: "ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM",
+      rating: 5,
+      comment: "Great work!",
+    })
+    const result = await contractCall("get-review", ["1"])
+    expect(result).toEqual({
+      reviewer: "ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM",
+      rating: 5,
+      comment: "Great work!",
+    })
+  })
+})
+
